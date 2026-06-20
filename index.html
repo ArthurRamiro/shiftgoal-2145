@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShiftGoal 2145: Um eletrizante jogo de futebol arcade cyberpunk 2D com gravidade dinâmica mutável. Jogue contra um amigo localmente!">
+    <meta name="keywords" content="ShiftGoal, Jogo de Futebol, Gravidade Invertida, Cyberpunk Game, HTML5 Canvas, Multiplayer Local">
+    <meta name="author" content="Antigravity Dev Studio">
+    <title>ShiftGoal 2145 - Futebol Cyberpunk com Gravidade Dinâmica</title>
+    
+    <!-- Link para Folha de Estilo Modular -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1 class="game-title">ShiftGoal 2145</h1>
+        <p class="game-subtitle">PROTÓTIPO DE GRAVIDADE MULTIPLAYER LOCAL</p>
+    </header>
+
+    <!-- Main -->
+    <main class="cabinet-wrapper">
+        <div class="game-screen-container">
+            <!-- Scanlines -->
+            <div class="scanlines-overlay"></div>
+
+            <!-- Canvas de Renderização Física -->
+            <canvas id="gameCanvas" tabindex="0"></canvas>
+            <!-- Menu -->
+            <section id="menu-overlay" class="overlay">
+                <div class="overlay-content">
+                    <h2>Menu Principal</h2>
+                    <p>Controle a gravidade, vença a física e marque gols no teto quando o sinal alertar. Multiplayer local para 2 jogadores.</p>
+                    <button id="btn-start" class="btn-cyber" type="button">Iniciar Partida</button>
+                </div>
+            </section>
+
+            <!-- Pause -->
+            <section id="pause-overlay" class="overlay hidden">
+                <div class="overlay-content">
+                    <h2>Transmissão Pausada</h2>
+                    <p>A gravidade estabilizou temporariamente. O que deseja fazer?</p>
+                    <button id="btn-resume" class="btn-cyber" type="button">Continuar</button>
+                    <button id="btn-restart" class="btn-cyber secondary" type="button">Reiniciar</button>
+                    <button id="btn-menu" class="btn-cyber secondary" type="button">Menu Inicial</button>
+                </div>
+            </section>
+
+            <!-- GameOver -->
+            <section id="gameover-overlay" class="overlay hidden">
+                <div class="overlay-content">
+                    <h2>Tempo Esgotado!</h2>
+                    <div id="winner-text" class="result-showcase">JAX VENCEU!</div>
+                    <button id="btn-restart-over" class="btn-cyber" type="button">Jogar Novamente</button>
+                    <button id="btn-menu-over" class="btn-cyber secondary" type="button">Menu Principal</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer: instruções -->
+    <footer class="instructions-wrapper">
+        
+        <!-- Controles Jax -->
+        <article class="control-card p1-card">
+            <h3><span>JAX</span> <span style="font-size: 0.75rem;">(Laranja)</span></h3>
+            <div class="keys-grid">
+                <div class="key-instruction">
+                    <kbd>A</kbd> Mover para Esquerda
+                </div>
+                <div class="key-instruction">
+                    <kbd>D</kbd> Mover para Direita
+                </div>
+                <div class="key-instruction">
+                    <kbd>W</kbd> Pular / Impulsionar
+                </div>
+            </div>
+        </article>
+
+        <!-- Controles Vaile -->
+        <article class="control-card p2-card">
+            <h3><span>VAILE</span> <span style="font-size: 0.75rem;">(Roxo)</span></h3>
+            <div class="keys-grid">
+                <div class="key-instruction">
+                    <kbd>←</kbd> Mover para Esquerda
+                </div>
+                <div class="key-instruction">
+                    <kbd>→</kbd> Mover para Direita
+                </div>
+                <div class="key-instruction">
+                    <kbd>↑</kbd> Pular / Impulsionar
+                </div>
+            </div>
+        </article>
+
+        <!-- Mecânica -->
+        <aside class="mechanics-card">
+            <p><strong>REVERSÃO GRAVITACIONAL:</strong> A gravidade inverte <strong>2 vezes</strong> por partida durante <strong>18 segundos (10% do tempo)</strong>. Quando isso ocorre, o teto vira chão, os jogadores flutuam e as <strong>traves de gol se movem para o teto!</strong></p>
+            <p style="margin-top: 8px; font-size: 0.75rem; opacity: 0.75;">Pressione <kbd>ESC</kbd> ou <kbd>P</kbd> a qualquer momento para pausar a simulação física.</p>
+        </aside>
+
+    </footer>
+
+    <!-- Ponto de Entrada do Script Modular JavaScript (ES Modules) -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

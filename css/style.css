@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+:root {
+    --bg-dark: #07070E;
+    --bg-panel: #0E0E1B;
+    --bg-overlay: rgba(7, 7, 14, 0.85);
+    
+    --neon-cyan: #00F5FF;
+    --neon-orange: #FF4D00;
+    --neon-purple: #B026FF;
+    --neon-gold: #FFD700;
+    
+    --text-primary: #FFFFFF;
+    --text-secondary: #90A0B5;
+    
+    --font-cyber: 'Orbitron', system-ui, sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+    
+    --border-glow-cyan: 0 0 15px rgba(0, 245, 255, 0.4), inset 0 0 15px rgba(0, 245, 255, 0.2);
+    --text-glow-cyan: 0 0 8px rgba(0, 245, 255, 0.6);
+    --text-glow-orange: 0 0 8px rgba(255, 77, 0, 0.6);
+    --text-glow-purple: 0 0 8px rgba(176, 38, 255, 0.6);
+}
+
+/* === RESET E LAYOUT BASE === */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(circle at 50% 30%, rgba(176, 38, 255, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 50% 80%, rgba(0, 245, 255, 0.06) 0%, transparent 50%),
+        linear-gradient(rgba(0, 245, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 255, 0.02) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+    color: var(--text-primary);
+    font-family: var(--font-cyber);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+/* === CABEÇALHO === */
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h1.game-title {
+    font-size: 2.8rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    text-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 20px rgba(0, 245, 255, 0.5),
+        2px 2px 0px var(--neon-purple);
+    animation: titlePulse 3s infinite ease-in-out;
+}
+
+.game-subtitle {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+/* === CONTAINER DO JOGO (GABINETE ARCADE) === */
+.cabinet-wrapper {
+    position: relative;
+    background: var(--bg-panel);
+    border: 3px solid #1C1C30;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 
+        0 15px 35px rgba(0, 0, 0, 0.8),
+        0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Moldura decorativa nos cantos do gabinete */
+.cabinet-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -5px; left: -5px; right: -5px; bottom: -5px;
+    border: 1px solid rgba(0, 245, 255, 0.2);
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.game-screen-container {
+    position: relative;
+    width: 800px;
+    height: 400px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 3px solid var(--neon-cyan);
+    box-shadow: var(--border-glow-cyan);
+}
+
+canvas#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: #030308;
+}
+
+/* Efeito sutil de linhas de tubo CRT na tela */
+.scanlines-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.8;
+}
+
+/* === OVERLAYS (Telas de Interface) === */
+.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: var(--bg-overlay);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.overlay-content {
+    background: rgba(15, 15, 28, 0.95);
+    border: 2px solid var(--neon-cyan);
+    padding: 30px 50px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 245, 255, 0.2);
+    max-width: 550px;
+    width: 90%;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+}
+
+.overlay h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    text-shadow: var(--text-glow-cyan);
+}
+
+.overlay p {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Placar em overlays */
+.result-showcase {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    margin: 15px 0 25px 0;
+    color: var(--neon-gold);
+}
+
+/* === BOTÕES CYBERPUNK === */
+.btn-cyber {
+    font-family: var(--font-cyber);
+    font-weight: bold;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+    background-color: var(--neon-cyan);
+    border: none;
+    padding: 12px 28px;
+    margin: 8px;
+    cursor: pointer;
+    position: relative;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-cyber:hover {
+    background-color: #FFFFFF;
+    box-shadow: 0 0 20px var(--neon-cyan);
+    transform: scale(1.05);
+}
+
+.btn-cyber:active {
+    transform: scale(0.98);
+}
+
+.btn-cyber.secondary {
+    background-color: transparent;
+    color: var(--neon-cyan);
+    border: 2px solid var(--neon-cyan);
+}
+
+.btn-cyber.secondary:hover {
+    background-color: rgba(0, 245, 255, 0.1);
+    color: #FFFFFF;
+}
+
+/* === INSTRUÇÕES E CONTROLES (FOOTER) === */
+.instructions-wrapper {
+    margin-top: 25px;
+    width: 800px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.control-card {
+    background: var(--bg-panel);
+    border: 2px solid #1C1C30;
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.3s ease;
+}
+
+.control-card.p1-card {
+    border-left: 5px solid var(--neon-orange);
+}
+
+.control-card.p2-card {
+    border-left: 5px solid var(--neon-purple);
+}
+
+.control-card h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.p1-card h3 { color: var(--neon-orange); text-shadow: var(--text-glow-orange); }
+.p2-card h3 { color: var(--neon-purple); text-shadow: var(--text-glow-purple); }
+
+.keys-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.key-instruction {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+}
+
+/* Estilização dos blocos das Teclas (Keycaps) */
+kbd {
+    background-color: #17172B;
+    border: 1px solid #3A3A5E;
+    border-radius: 4px;
+    box-shadow: 0 3px 0 #0C0C18;
+    color: #FFFFFF;
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    margin-right: 8px;
+    padding: 3px 8px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Painel Informativo da Mecânica */
+.mechanics-card {
+    grid-column: span 2;
+    background: linear-gradient(135deg, rgba(28, 28, 48, 0.6) 0%, rgba(14, 14, 27, 0.8) 100%);
+    border: 2px dashed rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    font-family: var(--font-mono);
+}
+
+.mechanics-card strong {
+    color: var(--neon-gold);
+}
+
+.mechanics-card p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* === ANIMAÇÕES === */
+@keyframes titlePulse {
+    0%, 100% {
+        text-shadow: 
+            0 0 10px var(--neon-cyan),
+            0 0 20px rgba(0, 245, 255, 0.5),
+            2px 2px 0px var(--neon-purple);
+    }
+    50% {
+        text-shadow: 
+            0 0 15px var(--neon-cyan),
+            0 0 35px rgba(0, 245, 255, 0.8),
+            -2px -2px 0px var(--neon-orange);
+    }
+}
+
+/* Responsividade Básica */
+@media (max-width: 850px) {
+    .cabinet-wrapper, .game-screen-container, .instructions-wrapper {
+        width: 100%;
+        max-width: 600px;
+    }
+    
+    .game-screen-container {
+        height: 300px; /* Reduz altura proporcionalmente se necessário */
+    }
+
+    .instructions-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .mechanics-card {
+        grid-column: span 1;
+    }
+    
+    h1.game-title {
+        font-size: 2rem;
+    }
+}
