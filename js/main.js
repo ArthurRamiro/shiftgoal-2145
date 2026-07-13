@@ -8,44 +8,34 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const getElement = (id, required = false) => {
-        const element = document.getElementById(id);
-        if (!element && required) {
-            throw new Error(`Elemento DOM '${id}' não encontrado. Verifique se o ID existe em index.html.`);
-        }
-        if (!element) {
-            console.warn(`Elemento DOM opcional '${id}' não encontrado.`);
-        }
-        return element;
-    };
-
     const uiElements = {
-        overlayMenu: getElement("menu-overlay", true),
-        overlaySetup: getElement("setup-overlay", true),
-        overlayPause: getElement("pause-overlay", true),
-        overlayGameOver: getElement("gameover-overlay", true),
+        overlayMenu: document.getElementById("menu-overlay"),
+        overlayPause: document.getElementById("pause-overlay"),
+        overlayGameOver: document.getElementById("gameover-overlay"),
 
-        btnStart: getElement("btn-start", true),
-        btnEnterArena: getElement("btn-enter-arena", true),
-        btnResume: getElement("btn-resume", true),
-        btnRestart: getElement("btn-restart", true),
-        btnRestartOver: getElement("btn-restart-over", true),
-        btnMenu: getElement("btn-menu", true),
-        btnMenuOver: getElement("btn-menu-over", true),
+        btnStart: document.getElementById("btn-start"),
+        btnResume: document.getElementById("btn-resume"),
+        btnRestart: document.getElementById("btn-restart"),
+        btnRestartOver: document.getElementById("btn-restart-over"),
+        btnMenu: document.getElementById("btn-menu"),
+        btnMenuOver: document.getElementById("btn-menu-over"),
 
-        textWinner: getElement("winner-text", true)
+        textWinner: document.getElementById("winner-text")
     };
 
     const jogo = new Jogo(canvas);
-    jogo.iniciar(uiElements);
 
-    const focusCanvas = () => canvas.focus();
-    uiElements.btnStart.addEventListener("click", () => jogo.mostrarSetup());
-    uiElements.btnEnterArena.addEventListener("click", () => jogo.entrarNaArena());
-    uiElements.btnEnterArena.addEventListener("click", focusCanvas);
-    uiElements.btnRestart.addEventListener("click", focusCanvas);
-    uiElements.btnRestartOver.addEventListener("click", focusCanvas);
-    uiElements.btnResume.addEventListener("click", focusCanvas);
-    uiElements.btnMenu.addEventListener("click", focusCanvas);
-    uiElements.btnMenuOver.addEventListener("click", focusCanvas);
+    jogo.iniciar({
+        ...uiElements,
+        btnRestart: uiElements.btnRestart,
+        btnMenu: uiElements.btnMenu
+    });
+
+    if (uiElements.btnRestartOver) uiElements.btnRestartOver.addEventListener("click", () => jogo.iniciarPartida());
+    if (uiElements.btnMenuOver) uiElements.btnMenuOver.addEventListener("click", () => jogo.mostrarMenu());
+
+    uiElements.btnStart?.addEventListener("click", () => canvas.focus());
+    uiElements.btnRestart?.addEventListener("click", () => canvas.focus());
+    uiElements.btnRestartOver?.addEventListener("click", () => canvas.focus());
+    uiElements.btnResume?.addEventListener("click", () => canvas.focus());
 });
