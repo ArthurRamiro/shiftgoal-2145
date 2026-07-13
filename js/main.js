@@ -8,34 +8,39 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    const getElement = (id) => {
+        const element = document.getElementById(id);
+        if (!element) {
+            throw new Error(`Elemento DOM '${id}' não encontrado. Verifique se o ID existe em index.html.`);
+        }
+        return element;
+    };
+
     const uiElements = {
-        overlayMenu: document.getElementById("menu-overlay"),
-        overlayPause: document.getElementById("pause-overlay"),
-        overlayGameOver: document.getElementById("gameover-overlay"),
+        overlayMenu: getElement("menu-overlay"),
+        overlaySetup: getElement("setup-overlay"),
+        overlayPause: getElement("pause-overlay"),
+        overlayGameOver: getElement("gameover-overlay"),
 
-        btnStart: document.getElementById("btn-start"),
-        btnResume: document.getElementById("btn-resume"),
-        btnRestart: document.getElementById("btn-restart"),
-        btnRestartOver: document.getElementById("btn-restart-over"),
-        btnMenu: document.getElementById("btn-menu"),
-        btnMenuOver: document.getElementById("btn-menu-over"),
+        btnStart: getElement("btn-start"),
+        btnEnterArena: getElement("btn-enter-arena"),
+        btnResume: getElement("btn-resume"),
+        btnRestart: getElement("btn-restart"),
+        btnRestartOver: getElement("btn-restart-over"),
+        btnMenu: getElement("btn-menu"),
+        btnMenuOver: getElement("btn-menu-over"),
 
-        textWinner: document.getElementById("winner-text")
+        textWinner: getElement("winner-text")
     };
 
     const jogo = new Jogo(canvas);
+    jogo.iniciar(uiElements);
 
-    jogo.iniciar({
-        ...uiElements,
-        btnRestart: uiElements.btnRestart,
-        btnMenu: uiElements.btnMenu
-    });
-
-    if (uiElements.btnRestartOver) uiElements.btnRestartOver.addEventListener("click", () => jogo.iniciarPartida());
-    if (uiElements.btnMenuOver) uiElements.btnMenuOver.addEventListener("click", () => jogo.mostrarMenu());
-
-    uiElements.btnStart?.addEventListener("click", () => canvas.focus());
-    uiElements.btnRestart?.addEventListener("click", () => canvas.focus());
-    uiElements.btnRestartOver?.addEventListener("click", () => canvas.focus());
-    uiElements.btnResume?.addEventListener("click", () => canvas.focus());
+    const focusCanvas = () => canvas.focus();
+    uiElements.btnEnterArena.addEventListener("click", focusCanvas);
+    uiElements.btnRestart.addEventListener("click", focusCanvas);
+    uiElements.btnRestartOver.addEventListener("click", focusCanvas);
+    uiElements.btnResume.addEventListener("click", focusCanvas);
+    uiElements.btnMenu.addEventListener("click", focusCanvas);
+    uiElements.btnMenuOver.addEventListener("click", focusCanvas);
 });
