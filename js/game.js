@@ -102,27 +102,23 @@ export class Jogo {
     // Vai ao menu
     mostrarMenu() {
         this.estado = 'MENU';
-        if (this.ui.overlaySetup) this.ui.overlaySetup.classList.add("hidden");
         this.atualizarUI();
     }
 
     // Exibe a tela de setup antes de iniciar a partida
     mostrarSetup() {
-        if (this.ui.overlayMenu) this.ui.overlayMenu.classList.add("hidden");
-        if (this.ui.overlayGameOver) this.ui.overlayGameOver.classList.add("hidden");
-        if (this.ui.overlayPause) this.ui.overlayPause.classList.add("hidden");
-        if (this.ui.overlaySetup) this.ui.overlaySetup.classList.remove("hidden");
+        this.estado = 'SETUP';
+        this.atualizarUI();
     }
 
     // Entrada na arena: fullscreen e início do jogo
     entrarNaArena() {
         const iniciar = () => {
-            if (this.ui.overlaySetup) this.ui.overlaySetup.classList.add("hidden");
             this.iniciarPartida();
         };
 
         const fullscreenTarget = document.documentElement;
-        if (fullscreenTarget.requestFullscreen) {
+        if (fullscreenTarget && fullscreenTarget.requestFullscreen) {
             fullscreenTarget.requestFullscreen().then(iniciar).catch(() => iniciar());
         } else {
             iniciar();
@@ -136,9 +132,13 @@ export class Jogo {
         if (this.ui.overlayGameOver) this.ui.overlayGameOver.classList.add("hidden");
         if (this.ui.overlaySetup) this.ui.overlaySetup.classList.add("hidden");
 
-        if (this.estado === 'MENU' && this.ui.overlayMenu) this.ui.overlayMenu.classList.remove("hidden");
-        else if (this.estado === 'PAUSED' && this.ui.overlayPause) this.ui.overlayPause.classList.remove("hidden");
-        else if (this.estado === 'GAMEOVER' && this.ui.overlayGameOver) {
+        if (this.estado === 'MENU' && this.ui.overlayMenu) {
+            this.ui.overlayMenu.classList.remove("hidden");
+        } else if (this.estado === 'SETUP' && this.ui.overlaySetup) {
+            this.ui.overlaySetup.classList.remove("hidden");
+        } else if (this.estado === 'PAUSED' && this.ui.overlayPause) {
+            this.ui.overlayPause.classList.remove("hidden");
+        } else if (this.estado === 'GAMEOVER' && this.ui.overlayGameOver) {
             this.ui.overlayGameOver.classList.remove("hidden");
             if (this.ui.textWinner) {
                 let textoVencedor = "";
