@@ -3,6 +3,7 @@ import { Campo } from "./arena.js";
 import { ManipuladorEntrada } from "./input.js";
 import { Jogador } from "./player.js";
 import { Bola } from "./ball.js";
+import { GerenciadorAudio } from "./audio.js";
 import { larguraCanvas, alturaCanvas, gravidadeBase, tempoTotalJogo, corJogador1, corJogador2 } from "./constants.js";
 
 export class Jogo {
@@ -15,9 +16,12 @@ export class Jogo {
 
         this.campo = new Campo(larguraCanvas, alturaCanvas);
         this.entrada = new ManipuladorEntrada();
-        this.jogador1 = new Jogador(150, corJogador1, true);
-        this.jogador2 = new Jogador(620, corJogador2, false);
+        this.jogador1 = new Jogador(150, corJogador1, true, "jax");
+        this.jogador2 = new Jogador(620, corJogador2, false, "vaile");
         this.bola = new Bola();
+        this.audio = new GerenciadorAudio();
+
+        Jogador.preloadSprites();
 
         this.placarP1 = 0;
         this.placarP2 = 0;
@@ -31,7 +35,10 @@ export class Jogo {
 
         // Tecla de pausa
         window.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" || e.key === "p" || e.key === "P") this.alternarPausa();
+            if (e.key === "Escape" || e.key === "p" || e.key === "P") {
+                this.audio.tocarClique();
+                this.alternarPausa();
+            }
         });
     }
 
@@ -39,10 +46,28 @@ export class Jogo {
     iniciar(uiElements) {
         this.ui = uiElements;
 
-        if (this.ui.btnStart) this.ui.btnStart.addEventListener("click", () => this.iniciarPartida());
-        if (this.ui.btnResume) this.ui.btnResume.addEventListener("click", () => this.retomarJogo());
-        if (this.ui.btnRestart) this.ui.btnRestart.addEventListener("click", () => this.iniciarPartida());
-        if (this.ui.btnMenu) this.ui.btnMenu.addEventListener("click", () => this.mostrarMenu());
+        // Botões de UI: destrava o áudio (necessário só na 1a interação) + toca clique
+        const comSom = (callback) => () => {
+            this.audio.destravar();
+            this.audio.tocarClique();
+            callback();
+        };
+
+        if (this.ui.btnStart) this.ui.btnStart.addEventListener("click", comSom(() => this.iniciarPartida()));
+        if (this.ui.btnResume) this.ui.btnResume.addEventListener("click", comSom(() => this.retomarJogo()));
+        if (this.ui.btnRestart) this.ui.btnRestart.addEventListener("click", comSom(() => this.iniciarPartida()));
+        if (this.ui.btnMenu) this.ui.btnMenu.addEventListener("click", comSom(() => this.mostrarMenu()));
+        if (this.ui.btnRestartOver) this.ui.btnRestartOver.addEventListener("click", comSom(() => {}));
+        if (this.ui.btnMenuOver) this.ui.btnMenuOver.addEventListener("click", comSom(() => {}));
+
+        if (this.ui.btnMute) {
+            const icone = this.ui.btnMute.querySelector(".btn-mute-icone");
+            this.ui.btnMute.addEventListener("click", () => {
+                this.audio.destravar();
+                const agoraSilenciado = this.audio.alternarSilencio();
+                if (icone) icone.textContent = agoraSilenciado ? "🔇" : "🔊";
+            });
+        }
 
         this.atualizarUI();
         this.ultimoTick = Date.now();
@@ -70,6 +95,7 @@ export class Jogo {
         this.entrada.resetar();
         this.ultimoTick = Date.now();
         this.atualizarUI();
+        this.audio.tocarApito();
     }
 
     // Reposiciona jogadores e bola
@@ -152,6 +178,7 @@ export class Jogo {
             forcaX += jogador.velX * 0.8;
             bola.velX = forcaX;
             bola.velY = forcaY;
+            this.audio.tocarChute();
         }
     }
 
@@ -175,12 +202,14 @@ export class Jogo {
                 this.gravidadeAtual = deveInverter ? -gravidadeBase : gravidadeBase;
                 this.jogador1.velY = 0;
                 this.jogador2.velY = 0;
+                this.audio.tocarAlertaGravidade();
             }
 
             if (this.tempoRestante <= 0) {
                 this.tempoRestante = 0;
                 this.estado = 'GAMEOVER';
                 this.atualizarUI();
+                this.audio.tocarFimDeJogo();
                 return;
             }
         }
@@ -192,9 +221,11 @@ export class Jogo {
         if (resultadoGol === "P1") {
             this.placarP1++;
             this.resetarEntidades();
+            this.audio.tocarGol();
         } else if (resultadoGol === "P2") {
             this.placarP2++;
             this.resetarEntidades();
+            this.audio.tocarGol();
         }
 
         this.verificarColisaoChute(this.jogador1, this.bola);
@@ -220,9 +251,9 @@ export class Jogo {
         }
 
         this.campo.desenharEstruturas(this.contexto, this.gravidadeInvertida);
-        this.jogador1.desenhar(this.contexto);
+        this.jogador1.desenhar(this.contexto, this.gravidadeInvertida);
         this.jogador2.p1Visible = false;
-        this.jogador2.desenhar(this.contexto);
+        this.jogador2.desenhar(this.contexto, this.gravidadeInvertida);
         this.bola.desenhar(this.contexto);
         this.desenharHUD();
     }

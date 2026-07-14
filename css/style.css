@@ -52,6 +52,93 @@ body {
 header {
     text-align: center;
     margin-bottom: 25px;
+    position: relative;
+}
+
+.title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+/* === SELO DE CLASSIFICAÇÃO INDICATIVA (estilo ClassInd) === */
+.classind-selo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1C7A1C;
+    border: 2px solid #FFFFFF;
+    border-radius: 4px;
+    padding: 4px 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.classind-letra {
+    font-family: var(--font-cyber);
+    font-weight: 900;
+    font-size: 1.4rem;
+    color: #FFFFFF;
+    line-height: 1;
+}
+
+.classind-texto {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 700px) {
+    .title-wrapper {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* === BARRA DE CONTROLES (fora da tela do jogo) === */
+.control-bar {
+    width: 800px;
+    max-width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin: 0 auto 12px;
+    padding: 0 4px;
+}
+
+.btn-mute {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-panel);
+    border: 1px solid var(--neon-cyan);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-mute-icone {
+    font-size: 1.1rem;
+}
+
+.btn-mute:hover {
+    box-shadow: var(--border-glow-cyan);
+    transform: scale(1.05);
+}
+
+@media (max-width: 700px) {
+    .control-bar {
+        justify-content: center;
+    }
 }
 
 h1.game-title {

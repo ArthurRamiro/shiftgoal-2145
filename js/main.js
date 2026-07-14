@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         btnRestartOver: document.getElementById("btn-restart-over"),
         btnMenu: document.getElementById("btn-menu"),
         btnMenuOver: document.getElementById("btn-menu-over"),
+        btnMute: document.getElementById("btn-mute"),
 
         textWinner: document.getElementById("winner-text")
     };

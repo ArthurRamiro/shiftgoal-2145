@@ -21,14 +21,18 @@ export class Bola {
 
     // Atualiza física; retorna "P1"/"P2" em gol
     atualizar(gravidadeAtual, larguraCanvas, alturaCanvas) {
-        this.velY += gravidadeAtual;
-        this.velX *= atrito;
+        const invertida = gravidadeAtual < 0;
+        const gravityFactor = invertida ? 1.25 : 1;
+        const horizontalDrag = invertida ? 0.92 : atrito;
+        const restitucao = invertida ? -0.8 : -0.7;
+
+        this.velY += gravidadeAtual * gravityFactor;
+        this.velX *= horizontalDrag;
         this.posX += this.velX;
         this.posY += this.velY;
 
-        this.angulo += this.velX * 0.05;
+        this.angulo += this.velX * 0.065;
 
-        const restitucao = -0.7;
         if (this.posY + this.raio >= alturaCanvas) {
             this.posY = alturaCanvas - this.raio;
             this.velY *= restitucao;
@@ -38,7 +42,6 @@ export class Bola {
             this.velY *= restitucao;
         }
 
-        const invertida = gravidadeAtual < 0;
         const yTravessao = invertida ? alturaGol : alturaCanvas - alturaGol;
 
         // Gol/parede esquerda
